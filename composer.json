@@ -1,0 +1,28 @@
+{
+  "name": "i80586/laravel-form-fields",
+  "description": "Laravel form fields generator - for admin panels",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "keywords": [
+    "laravel",
+    "form",
+    "html"
+  ],
+  "authors": [
+    {
+      "name": "Rasim",
+      "email": "rasim.ashurov@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "i80586\\Form\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  }
+}
