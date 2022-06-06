@@ -59,10 +59,7 @@ class Html
 
         $html = $this->appendLabelIfNeeded($name, $options);
         $html .= sprintf('<input%s>', self::generateHtmlOptionsToString(array_reverse($options)));
-
-        if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
-            $html .= $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
-        }
+        $html .= $this->appendErrorLabelIfNeeded($options);
 
         return $html;
     }
@@ -90,6 +87,7 @@ class Html
             'name' => $name,
             'id'   => $name
         ], $options));
+        $html .= $this->appendErrorLabelIfNeeded($options);
         return $html;
     }
 
@@ -103,6 +101,14 @@ class Html
         }
         unset($options['label']);
         return $html;
+    }
+
+    protected function appendErrorLabelIfNeeded(array $options): string
+    {
+        if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
+             return $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
+        }
+        return '';
     }
 
     protected static function classNameWithError(string $fieldName, string $classNames): string
