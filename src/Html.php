@@ -68,7 +68,7 @@ class Html
     {
         $optionsList = [];
         if (!empty($options['prompt'])) {
-            $optionsList[] = $this->tag('option', $options['prompt']);
+            $optionsList[] = $this->tag('option', $options['prompt'], ['value' => null]);
             unset($options['prompt']);
         }
         foreach ($list as $value => $key) {
