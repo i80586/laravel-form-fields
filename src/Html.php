@@ -32,7 +32,7 @@ class Html
         return self::$instance;
     }
 
-    public function tag(string $tagName, string|false $content = false, array $options = []): string
+    public function tag(string $tagName, $content = false, array $options = []): string
     {
         $tag = sprintf('<%s%s>', $tagName, self::generateHtmlOptionsToString($options));
         if ($content !== false) {
