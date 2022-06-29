@@ -76,7 +76,7 @@ class Html
             if ((string)$value !== '') {
                 $htmlOptions = ['value' => $value];
             }
-            if ($value == getOldValue($name, $chosen)) {
+            if ($value == $this->getOldValue($name, $chosen)) {
                 $htmlOptions['selected'] = 'selected';
             }
             $optionsList[] = $this->tag('option', $key, $htmlOptions);
