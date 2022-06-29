@@ -52,7 +52,7 @@ class Html
     public function input(string $name, mixed $value, array $options = [], string $type = 'text'): string
     {
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $options['value'] = old($name, $value);
+        $options['value'] = $this->getOldValue($name, $value);
         $options['id']    = $name;
         $options['name']  = $name;
         $options['type']  = $type;
@@ -76,7 +76,7 @@ class Html
             if ((string)$value !== '') {
                 $htmlOptions = ['value' => $value];
             }
-            if ($value == old($name, $chosen)) {
+            if ($value == getOldValue($name, $chosen)) {
                 $htmlOptions['selected'] = 'selected';
             }
             $optionsList[] = $this->tag('option', $key, $htmlOptions);
@@ -106,9 +106,16 @@ class Html
     protected function appendErrorLabelIfNeeded(array $options): string
     {
         if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
-             return $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
+            return $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
         }
         return '';
+    }
+
+    protected function getOldValue(string $name, mixed $defaultValue = null): mixed
+    {
+        $name = str_replace(['[', ']'], '.', $name);
+        $name = rtrim(preg_replace('/[\.]+/i', '.', $name), '.');
+        return old($name, $defaultValue);
     }
 
     protected static function classNameWithError(string $fieldName, string $classNames): string
