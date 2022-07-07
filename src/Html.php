@@ -64,6 +64,20 @@ class Html
         return $html;
     }
 
+    public function textarea(string $name, mixed $value = null, array $options = []): string
+    {
+        $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
+        $options['value'] = $this->getOldValue($name, $value);
+        $options['id']    = $name;
+        $options['name']  = $name;
+
+        $html = $this->appendLabelIfNeeded($name, $options);
+        $html .= sprintf('<textarea%s></textarea>', self::generateHtmlOptionsToString(array_reverse($options)));
+        $html .= $this->appendErrorLabelIfNeeded($options);
+
+        return $html;
+    }
+
     public function dropDown(string $name, mixed $chosen, array $list = [], array $options = []): string
     {
         $optionsList = [];
