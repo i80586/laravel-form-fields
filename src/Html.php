@@ -52,7 +52,7 @@ class Html
     public function input(string $name, mixed $value, array $options = [], string $type = 'text'): string
     {
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $options['value'] = $this->getOldValue($name, $value);
+        $options['value'] = $this->getOldValue($name, htmlspecialchars($value));
         $options['id']    = $name;
         $options['name']  = $name;
         $options['type']  = $type;
