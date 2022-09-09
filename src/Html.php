@@ -70,12 +70,14 @@ class Html
     public function textarea(string $name, mixed $value = null, array $options = []): string
     {
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $options['value'] = $this->getOldValue($name, $value);
         $options['id']    = $name;
         $options['name']  = $name;
 
         $html = $this->appendLabelIfNeeded($name, $options);
-        $html .= sprintf('<textarea%s></textarea>', self::generateHtmlOptionsToString(array_reverse($options)));
+        $html .= sprintf('<textarea%s>%s</textarea>',
+            self::generateHtmlOptionsToString(array_reverse($options)),
+            $this->getOldValue($name, $value)
+        );
         $html .= $this->appendErrorLabelIfNeeded($options);
 
         return $html;
