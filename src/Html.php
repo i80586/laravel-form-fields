@@ -56,7 +56,7 @@ class Html
         if (is_string($options['value'])) {
             $options['value'] = htmlspecialchars($options['value']);
         }
-        $options['id']    = $name;
+        $options['id']    = $options['id'] ?? $name;
         $options['name']  = $name;
         $options['type']  = $type;
 
@@ -70,7 +70,7 @@ class Html
     public function textarea(string $name, mixed $value = null, array $options = []): string
     {
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $options['id']    = $name;
+        $options['id']    = $options['id'] ?? $name;
         $options['name']  = $name;
 
         $html = $this->appendLabelIfNeeded($name, $options);
@@ -108,7 +108,7 @@ class Html
         $html = $this->appendLabelIfNeeded($name, $options);
         $html .= $this->tag('select', implode('', $optionsList), array_merge([
             'name' => $name,
-            'id'   => $name
+            'id'   => $options['id'] ?? $name
         ], $options));
         $html .= $this->appendErrorLabelIfNeeded($options);
         return $html;
