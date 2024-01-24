@@ -143,6 +143,7 @@ class Html
 
     protected static function classNameWithError(string $fieldName, string $classNames): string
     {
+        $fieldName = self::getInputIdByName($fieldName);
         $errors = \View::getShared()['errors'] ?? [];
         if ($errors->has($fieldName)) {
             $classNames .= ' is-invalid';
@@ -162,6 +163,11 @@ class Html
             $htmlOptionsAsString = ' ' . $htmlOptionsAsString;
         }
         return $htmlOptionsAsString;
+    }
+
+    protected static function getInputIdByName(string $fieldName): string
+    {
+        return str_replace(['[]', '][', '[', ']', ' ', '.', '--'], ['', '.', '.', '', '.', '.', '.'], $fieldName);
     }
 
 }
