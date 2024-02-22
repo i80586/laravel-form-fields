@@ -2,6 +2,7 @@
   "name": "i80586/laravel-form-fields",
   "description": "Laravel form fields generator - for admin panels",
   "minimum-stability": "stable",
+  "type": "library",
   "license": "MIT",
   "keywords": [
     "laravel",
@@ -10,8 +11,9 @@
   ],
   "authors": [
     {
-      "name": "Rasim",
-      "email": "rasim.ashurov@gmail.com"
+      "name": "Rasim Ashurov",
+      "email": "rasim.ashurov@gmail.com",
+      "role": "Maintainer"
     }
   ],
   "require": {
