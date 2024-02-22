@@ -1,6 +1,10 @@
 # laravel-form-fields
 Form fields generator for Laravel
 
+[![Latest Version](https://img.shields.io/github/release/i80586/laravel-form-fields.svg?style=flat-square)](https://github.com/i80586/laravel-form-fields/releases)
+
+<hr>
+
 ### Examples:
 
 <br>
