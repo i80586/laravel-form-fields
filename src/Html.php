@@ -41,12 +41,12 @@ class Html
      *
      * @return string
      */
-    public function tag(string $tagName, $content = false, array $options = []): string
+    public function tag(string $tagName, mixed $content = false, array $options = []): string
     {
         if ($content === false) {
-            return sprintf('<%s %s />', $tagName, self::generateHtmlOptionsToString($options));
+            return sprintf('<%s%s>', $tagName, self::generateHtmlOptionsToString($options));
         }
-        return sprintf('<%s %s>%s</%s>', $tagName, self::generateHtmlOptionsToString($options), $content, $tagName);
+        return sprintf('<%s%s>%s</%s>', $tagName, self::generateHtmlOptionsToString($options), $content, $tagName);
     }
 
     /**
@@ -76,7 +76,7 @@ class Html
      *
      * @return string
      */
-    public function input(string $name, mixed $value, array $options = [], string $type = 'text'): string
+    public function input(string $name, mixed $value = null, array $options = [], string $type = 'text'): string
     {
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
         $options['value'] = $this->getOldValue($name, $value);
@@ -129,7 +129,7 @@ class Html
      *
      * @return string
      */
-    public function dropDown(string $name, mixed $chosen, array $list = [], array $options = []): string
+    public function dropDown(string $name, mixed $chosen = null, array $list = [], array $options = []): string
     {
         $optionsList = [];
         if (!empty($options['prompt'])) {
@@ -221,15 +221,15 @@ class Html
     protected static function classNameWithError(string $fieldName, string $classNames): string
     {
         $fieldName = self::getInputIdByName($fieldName);
-        $errors = \View::getShared()['errors'] ?? []; // Laravel View class
-        if ($errors->has($fieldName)) {
+        $errors = \View::getShared()['errors'] ?? null; // Laravel View class
+        if (!is_null($errors) && $errors->has($fieldName)) {
             $classNames .= ' is-invalid';
         }
         return $classNames;
     }
 
     /**
-     * Generates tag attrbutes from key => value based options
+     * Generates tag attributes from key => value based options
      *
      * @param array     $options Tag attributes. Example: ['class' => 'class names here', 'id' => 'my-custom-id'].
      *
