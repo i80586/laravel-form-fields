@@ -80,16 +80,24 @@ class Html
     {
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
         $options['value'] = $this->getOldValue($name, $value);
-        if (is_string($options['value'])) {
+        if (is_null($options['value'])) {
+            unset($options['value']);
+        } elseif (is_string($options['value'])) {
             $options['value'] = htmlspecialchars($options['value']);
         }
         $options['id']    = $options['id'] ?? $name;
         $options['name']  = $name;
         $options['type']  = $type;
 
-        $html = $this->appendLabelIfNeeded($name, $options);
+        if (empty($options['class'])) {
+            unset($options['class']);
+        }
+
+        $html  = $this->appendLabelIfNeeded($name, $options);
+        $label = $this->appendErrorLabelIfNeeded($options);
+
         $html .= sprintf('<input%s>', self::generateHtmlOptionsToString(array_reverse($options)));
-        $html .= $this->appendErrorLabelIfNeeded($options);
+        $html .= $label;
 
         return $html;
     }
@@ -109,12 +117,18 @@ class Html
         $options['id']    = $options['id'] ?? $name;
         $options['name']  = $name;
 
-        $html = $this->appendLabelIfNeeded($name, $options);
+        if (empty($options['class'])) {
+            unset($options['class']);
+        }
+
+        $html  = $this->appendLabelIfNeeded($name, $options);
+        $label = $this->appendErrorLabelIfNeeded($options);
+
         $html .= sprintf('<textarea%s>%s</textarea>',
             self::generateHtmlOptionsToString(array_reverse($options)),
             $this->getOldValue($name, $value)
         );
-        $html .= $this->appendErrorLabelIfNeeded($options);
+        $html .= $label;
 
         return $html;
     }
@@ -146,17 +160,25 @@ class Html
                 (is_scalar($oldValue) && $value == $oldValue) ||
                 (is_array($oldValue) && in_array($value, $oldValue))
             ) {
-                $htmlOptions['selected'] = 'selected';
+                $htmlOptions['selected'] = true;
             }
             $optionsList[] = $this->tag('option', $key, $htmlOptions);
         }
+
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $html = $this->appendLabelIfNeeded($name, $options);
+        if (empty($options['class'])) {
+            unset($options['class']);
+        }
+
+        $html  = $this->appendLabelIfNeeded($name, $options);
+        $label = $this->appendErrorLabelIfNeeded($options);
+
         $html .= $this->tag('select', implode('', $optionsList), array_merge([
             'name' => $name,
             'id'   => $options['id'] ?? $name
         ], $options));
-        $html .= $this->appendErrorLabelIfNeeded($options);
+        $html .= $label;
+
         return $html;
     }
 
@@ -187,12 +209,14 @@ class Html
      *
      * @return string
      */
-    protected function appendErrorLabelIfNeeded(array $options): string
+    protected function appendErrorLabelIfNeeded(array &$options): string
     {
+        $label = '';
         if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
-            return $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
+            $label = $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
+            unset($options['errorLabel']);
         }
-        return '';
+        return $label;
     }
 
     /**
@@ -213,13 +237,16 @@ class Html
     /**
      * Adds 'is-invalid' class to the input if there is an error.
      *
-     * @param string    $fieldName      The 'name' attribute.
-     * @param string    $classNames     The 'class' attribute.
+     * @param string               $fieldName      The 'name' attribute.
+     * @param string|false|null    $classNames     The 'class' attribute.
      *
      * @return string
      */
-    protected static function classNameWithError(string $fieldName, string $classNames): string
+    protected static function classNameWithError(string $fieldName, string|false|null $classNames): string
     {
+        if (empty($classNames)) {
+            $classNames = '';
+        }
         $fieldName = self::getInputIdByName($fieldName);
         $errors = \View::getShared()['errors'] ?? null; // Laravel View class
         if (!is_null($errors) && $errors->has($fieldName)) {

@@ -13,9 +13,14 @@ if (!class_exists(\View::class)) {
 
     class ViewErrorBag
     {
-        public function has(): bool
+        private array $errors = [
+            'withError' => true,
+            'post.text' => true
+        ];
+
+        public function has(string $name): bool
         {
-            return false;
+            return isset($this->errors[$name]);
         }
     }
 
