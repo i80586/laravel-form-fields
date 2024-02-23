@@ -2,6 +2,7 @@
 Form fields generator for Laravel
 
 [![Latest Version](https://img.shields.io/github/release/i80586/laravel-form-fields.svg?style=flat-square)](https://github.com/i80586/laravel-form-fields/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/i80586/laravel-form-fields/php-ci.yml?label=ci%20build&style=flat-square)](https://github.com/i80586/laravel-form-fields/actions?query=workflow%3ACI)
 
 <hr>
 
