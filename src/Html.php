@@ -183,6 +183,27 @@ class Html
     }
 
     /**
+     * Appends checkbox with label for AdminLte admin panel
+     *
+     * @param string    $label   The label for checkbox
+     * @param string    $name    The content between tag pairs
+     * @param bool|null $checked Flag whether checkbox is checked or not
+     * @param array     $options (optional) Tag attributes.
+     *
+     * @return string
+     */
+    public function checkbox(string $label, string $name, bool|int|null $checked, array $options = []): string
+    {
+        $html = $this->label($label, $name);
+        $html .= $this->tag('label',
+            $this->input($name, null,
+                ['checked' => $this->getOldValue($name, $checked), 'label' => false], 'checkbox')
+            . $this->tag('span', '', array_merge($options, ['class' => 'slider round'])),
+            ['class' => 'switch']);
+        return $html;
+    }
+
+    /**
      * Appends label tag under some conditions.
      *
      * @param string    $name               The content between tag pairs.
