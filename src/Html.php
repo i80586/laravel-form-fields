@@ -204,6 +204,23 @@ class Html
     }
 
     /**
+     * Appends link
+     *
+     * @param string      $label   The label for link
+     * @param null|string $link    Value for href attribute of link
+     * @param array       $options (optional) Tag attributes.
+     *
+     * @return string
+     */
+    public function link(string $label, ?string $link = null, array $options = []): string
+    {
+        if (!is_null($link) && !isset($options['link'])) {
+            $options['href'] = $link;
+        }
+        return $this->tag('a', $label, $options);
+    }
+
+    /**
      * Appends label tag under some conditions.
      *
      * @param string    $name               The content between tag pairs.

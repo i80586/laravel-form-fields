@@ -12,6 +12,14 @@ class BaseTest extends \PHPUnit\Framework\TestCase
             '<script src="test.js" async></script>',
             html()->tag('script', '', ['src' => 'test.js', 'async' => true])
         );
+        $this->assertEquals(
+            '<a>Test</a>',
+            html()->link('Test')
+        );
+        $this->assertEquals(
+            '<a href="https://">Test</a>',
+            html()->link('Test', 'https://')
+        );
     }
 
 }
