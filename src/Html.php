@@ -194,12 +194,24 @@ class Html
      */
     public function checkbox(string $label, string $name, bool|int|null $checked, array $options = []): string
     {
-        $html = $this->label($label, $name);
+        $labelOptions = ['class' => 'switch'];
+        if (isset($options['label']) && is_array($options['label'])) {
+            $labelOptions = array_merge($labelOptions, $options['label']);
+            unset($options['label']);
+        }
+
+        $clearfix = '';
+        if (isset($options['clearfix'])) {
+            $clearfix = $this->tag('div', '', ['class' => 'clearfix']);
+            unset($options['clearfix']);
+        }
+
+        $html = $this->label($label, $name) . $clearfix;
         $html .= $this->tag('label',
             $this->input($name, null,
                 ['checked' => $this->getOldValue($name, $checked), 'label' => false], 'checkbox')
             . $this->tag('span', '', array_merge($options, ['class' => 'slider round'])),
-            ['class' => 'switch']);
+            $labelOptions);
         return $html;
     }
 
