@@ -209,7 +209,7 @@ class Html
         $html = $this->label($label, $name) . $clearfix;
         $html .= $this->tag('label',
             $this->input($name, null,
-                ['checked' => $this->getOldValue($name, $checked), 'label' => false], 'checkbox')
+                ['checked' => $this->getOldValue($name, (bool)$checked), 'label' => false], 'checkbox')
             . $this->tag('span', '', array_merge($options, ['class' => 'slider round'])),
             $labelOptions);
         return $html;
