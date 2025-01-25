@@ -150,20 +150,7 @@ class Html
             $optionsList[] = $this->tag('option', $options['prompt'], ['value' => null]);
             unset($options['prompt']);
         }
-        foreach ($list as $value => $key) {
-            $htmlOptions = [];
-            if ((string)$value !== '') {
-                $htmlOptions = ['value' => $value];
-            }
-            $oldValue = $this->getOldValue($name, $chosen);
-            if (
-                (is_scalar($oldValue) && $value == $oldValue) ||
-                (is_array($oldValue) && in_array($value, $oldValue))
-            ) {
-                $htmlOptions['selected'] = true;
-            }
-            $optionsList[] = $this->tag('option', $key, $htmlOptions);
-        }
+        $optionsList = array_merge($optionsList, $this->optionsList($list, $name, $chosen));
 
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
         if (empty($options['class'])) {
@@ -180,6 +167,35 @@ class Html
         $html .= $label;
 
         return $html;
+    }
+
+    public function optionsList(array $list, string $name, mixed $chosen): array
+    {
+        $optionsList = [];
+        foreach ($list as $value => $key) {
+            if (is_array($key)) {
+                $optionsList[] = $this->tag(
+                    'optgroup',
+                    implode('', $this->optionsList($key, $name, $chosen)),
+                    ['label' => $value]
+                );
+                continue;
+            }
+
+            $htmlOptions = [];
+            if ((string)$value !== '') {
+                $htmlOptions = ['value' => $value];
+            }
+            $oldValue = $this->getOldValue($name, $chosen);
+            if (
+                (is_scalar($oldValue) && $value == $oldValue) ||
+                (is_array($oldValue) && in_array($value, $oldValue))
+            ) {
+                $htmlOptions['selected'] = true;
+            }
+            $optionsList[] = $this->tag('option', $key, $htmlOptions);
+        }
+        return $optionsList;
     }
 
     /**
