@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace i80586\Form;
 
+use i80586\Form\Elements\Input;
+
 /**
  * @author Rasim Ashurov
- * @date 6 April, 2022
+ * @date 7 February 2026
  */
-class Html
+class Form
 {
-
-    private static self $instance;
 
     public function __wakeup()
     {
@@ -24,12 +24,13 @@ class Html
     {
     }
 
-    public static function instance(): self
+    public static function instance(): static
     {
-        if (empty(self::$instance)) {
-            self::$instance = new self();
+        static $instance;
+        if (!$instance) {
+            return $instance = new self();
         }
-        return self::$instance;
+        return $instance;
     }
 
     /**
@@ -76,8 +77,10 @@ class Html
      *
      * @return string
      */
-    public function input(string $name, mixed $value = null, array $options = [], string $type = 'text'): string
+    public function input(string $name, mixed $value = null): Input
     {
+        return new Input($name, $value);
+
         $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
         $options['value'] = $this->getOldValue($name, $value);
         if (is_null($options['value'])) {
@@ -94,7 +97,7 @@ class Html
         }
 
         $html  = $this->appendLabelIfNeeded($name, $options);
-        $label = $this->appendErrorLabelIfNeeded($options);
+        $label = $this->appendErrorLabelIfNeeded('input', $options);
 
         $html .= sprintf('<input%s>', self::generateHtmlOptionsToString(array_reverse($options)));
         $html .= $label;
@@ -271,11 +274,12 @@ class Html
     /**
      * Appends error label under some conditions
      *
-     * @param array     $options Tag attributes. Example: ['errorLabel' => 'This field is required', 'class' => 'is-invalid'].
+     * @param string $tagName
+     * @param array  $options Tag attributes. Example: ['errorLabel' => 'This field is required', 'class' => 'is-invalid'].
      *
      * @return string
      */
-    protected function appendErrorLabelIfNeeded(array &$options): string
+    protected function appendErrorLabelIfNeeded(string $tagName, array &$options): string
     {
         $label = '';
         if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
@@ -319,39 +323,6 @@ class Html
             $classNames .= ' is-invalid';
         }
         return $classNames;
-    }
-
-    /**
-     * Generates tag attributes from key => value based options
-     *
-     * @param array     $options Tag attributes. Example: ['class' => 'class names here', 'id' => 'my-custom-id'].
-     *
-     * @return string
-     */
-    protected static function generateHtmlOptionsToString(array $options): string
-    {
-        $htmlOptionsAsString = join(' ', array_map(function ($key) use ($options) {
-            if (is_bool($options[$key])) {
-                return $options[$key] ? $key : '';
-            }
-            return $key . '="' . $options[$key] . '"';
-        }, array_keys($options)));
-        if (!empty($htmlOptionsAsString)) {
-            $htmlOptionsAsString = ' ' . $htmlOptionsAsString;
-        }
-        return $htmlOptionsAsString;
-    }
-
-    /**
-     * Converts array-like input name to dot notation
-     *
-     * @param string    $fieldName The 'name' attribute.
-     *
-     * @return string
-     */
-    protected static function getInputIdByName(string $fieldName): string
-    {
-        return str_replace(['[]', '][', '[', ']', ' ', '.', '--'], ['', '.', '.', '', '.', '.', '.'], $fieldName);
     }
 
 }

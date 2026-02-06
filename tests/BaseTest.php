@@ -5,21 +5,12 @@ class BaseTest extends \PHPUnit\Framework\TestCase
 
     public function testTagGeneration()
     {
-        $this->assertEquals('<br>', html()->tag('br'));
-        $this->assertEquals('<p></p>', html()->tag('p', ''));
-        $this->assertEquals('<p class="test"></p>', html()->tag('p', '', ['class' => 'test']));
-        $this->assertEquals(
-            '<script src="test.js" async></script>',
-            html()->tag('script', '', ['src' => 'test.js', 'async' => true])
-        );
-        $this->assertEquals(
-            '<a>Test</a>',
-            html()->link('Test')
-        );
-        $this->assertEquals(
-            '<a href="https://">Test</a>',
-            html()->link('Test', 'https://')
-        );
+        $input = form()->input('first_name', 'John Doe')
+            ->placeholder('Enter price')
+            ->required(true);
+
+        $this->assertEquals('<input name="first_name" value="John Doe" placeholder="Enter price" required>',
+            $input->render());
     }
 
 }

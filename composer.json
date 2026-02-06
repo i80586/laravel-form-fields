@@ -17,10 +17,10 @@
     }
   ],
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "v9.6.*"
+    "phpunit/phpunit": "^9.6"
   },
   "scripts": {
     "test": "./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests"
@@ -32,5 +32,12 @@
     "files": [
       "src/helpers.php"
     ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "I80586\\FormFields\\FormFieldsServiceProvider"
+      ]
+    }
   }
 }

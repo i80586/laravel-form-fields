@@ -1,10 +1,10 @@
 <?php
 
-use i80586\Form\Html;
+use i80586\Form\Form;
 
-if (!function_exists('html')) {
-    function html(): Html
+if (!function_exists('form')) {
+    function form(): Form
     {
-        return Html::instance();
+        return Form::instance();
     }
 }
