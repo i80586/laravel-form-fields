@@ -22,6 +22,11 @@ if (!class_exists(\View::class)) {
         {
             return isset($this->errors[$name]);
         }
+
+        public function first(string $name): ?string
+        {
+            return $this->errors[$name] ?? null;
+        }
     }
 
     class View

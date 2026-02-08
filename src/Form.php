@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace i80586\Form;
 
 use i80586\Form\Elements\Input;
+use i80586\Form\Elements\Tag;
 
 /**
  * @author Rasim Ashurov
@@ -38,12 +39,13 @@ class Form
      *
      * @param string    $tagName            Tag name. Example: 'div', 'span', 'p', 'a', etc.
      * @param mixed     $content (optional) Tag content. If false, tag will be self-closing.
-     * @param array     $options (optional) Tag attributes. Example: ['class' => 'text-center', 'id' => 'my-id'].
      *
-     * @return string
+     * @return Tag
      */
-    public function tag(string $tagName, mixed $content = false, array $options = []): string
+    public function tag(string $tagName, mixed $content = false): Tag
     {
+        return new Tag($tagName, $content);
+
         if ($content === false) {
             return sprintf('<%s%s>', $tagName, self::generateHtmlOptionsToString($options));
         }
@@ -97,7 +99,7 @@ class Form
         }
 
         $html  = $this->appendLabelIfNeeded($name, $options);
-        $label = $this->appendErrorLabelIfNeeded('input', $options);
+        $label = $this->appendErrorLabelIfNeeded($options);
 
         $html .= sprintf('<input%s>', self::generateHtmlOptionsToString(array_reverse($options)));
         $html .= $label;
@@ -274,12 +276,11 @@ class Form
     /**
      * Appends error label under some conditions
      *
-     * @param string $tagName
      * @param array  $options Tag attributes. Example: ['errorLabel' => 'This field is required', 'class' => 'is-invalid'].
      *
      * @return string
      */
-    protected function appendErrorLabelIfNeeded(string $tagName, array &$options): string
+    protected function appendErrorLabelIfNeeded(array &$options): string
     {
         $label = '';
         if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
