@@ -5,29 +5,29 @@ declare(strict_types=1);
 namespace i80586\Form\Elements;
 
 use i80586\Form\Element;
+use i80586\Form\Traits\NonClosable;
 
 class Input extends Element
 {
 
-    public function __construct(protected ?string $name = null, protected mixed $value = null)
+    use NonClosable;
+
+    public function __construct(?string $name = null, mixed $value = null)
     {
-        if ($this->name !== null) {
-            $this->addAttribute('name', $this->name);
-            $this->addAttribute('id', $this->convertNameToId($this->name));
+        $this->addAttribute('type', 'text');
+
+        if ($name !== null) {
+            $this->addAttribute('name', $name);
+            $this->addAttribute('id', $this->makeDefaultId($name));
         }
-        if ($this->value !== null) {
-            $this->addAttribute('value', $this->value);
+        if ($value !== null) {
+            $this->addAttribute('value', $value);
         }
     }
 
     protected function tagName(): string
     {
         return 'input';
-    }
-
-    protected function isClosable(): bool
-    {
-        return false;
     }
 
     protected function initialize(): void

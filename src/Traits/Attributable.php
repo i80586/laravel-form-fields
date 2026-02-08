@@ -1,6 +1,6 @@
 <?php
 
-namespace i80586\Form;
+namespace i80586\Form\Traits;
 
 trait Attributable
 {
@@ -9,9 +9,33 @@ trait Attributable
 
     public function __call(string $name, array $arguments): static
     {
-        $value = count($arguments) > 1 ? implode(',', $arguments) : $arguments[0];
-        $this->addAttribute($name, $value);
+        $this->addAttribute($name, $this->prepareAttributeValue($arguments));
         return $this;
+    }
+
+    private function prepareAttributeValue(array $arguments): mixed
+    {
+        if (!isset($arguments[0])) {
+            return null;
+        }
+
+        $value = $arguments[0];
+
+        if (!is_array($value)) {
+            return count($arguments) === 1 ? $value : implode(' ', $arguments);
+        }
+
+        $classes = [];
+        foreach ($value as $className => $isEnabled) {
+            if (is_int($className)) {
+                $className = $isEnabled;
+            }
+            if ($isEnabled) {
+                $classes[] = $className;
+            }
+        }
+
+        return implode(' ', $classes);
     }
 
     protected function addAttribute(string $name, mixed $value = null): static

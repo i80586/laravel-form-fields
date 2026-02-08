@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace i80586\Form;
 
+use i80586\Form\Traits\Attributable;
+
 abstract class Element
 {
 
-    use Attributable;
+    use Attributable, Valueable;
 
     abstract protected function tagName(): string;
     abstract protected function isClosable(): bool;
@@ -45,7 +47,7 @@ abstract class Element
         $this->resetAttributes();
     }
 
-    protected function convertNameToId(string $name): string
+    protected function makeDefaultId(string $name): string
     {
         return str_replace(
             ['[]', '][', '[', ']', ' ', '.', '--'],
