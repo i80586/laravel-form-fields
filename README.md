@@ -1,47 +1,114 @@
 # laravel-form-fields
-Form fields generator for Laravel
+
+Fluent form fields generator for Laravel
 
 [![Latest Version](https://img.shields.io/github/release/i80586/laravel-form-fields.svg?style=flat-square)](https://github.com/i80586/laravel-form-fields/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/i80586/laravel-form-fields/php-ci.yml?label=ci%20build&style=flat-square)](https://github.com/i80586/laravel-form-fields/actions?query=workflow%3ACI)
 
 <hr>
 
-### Examples:
+## 🚀 About
 
-<br>
+`laravel-form-fields` provides a **fluent, expressive API** for generating form fields in Laravel.
 
+Version 2 introduces a **builder-style syntax**, replacing array-based configuration with readable method chaining.
+
+---
+
+## 📦 Installation
+
+```bash
+composer require i80586/laravel-form-fields
 ```
-{!! html()->input('firstName') !!}
+
+## Basic usage
+
+```php
+{!! form()->input('name') !!}
+```
+
+Output:
+
+```html
+<label for="name">Name</label>
+<input type="text" name="name" id="name" class="form-control">
+```
+
+### Setting default value:
+
+```php
+{!! form()->input('name', 'John') !!}
 ```
 
 This will be output:
 
-```
-<label for="firstName">FirstName</label>
-<input type="text" id="firstName" class="form-control" name="firstName" value="">
+```html
+<label for="name">Name</label>
+<input type="text" name="name" id="name" class="form-control" value="John">
 ```
 
-<br>
-You can change automatic generated label and set first default value:
+### Label
 
-```
-{!! html()->input('firstName', 'John', ['label' => 'Your name']) !!}
+```php
+{!! form()->input('name')->label('Your name') !!}
 ```
 
 This will be output:
 
-```
-<label for="firstName">Your name</label>
-<input type="text" id="firstName" class="form-control" name="firstName" value="John">
-```
-
-<br>
-Change input type by setting fourth argument which is set by default to text:
-
-```
-{!! html()->input('price', 0, [], 'number') !!}
+```html
+<label for="name">Your name</label>
+<input type="text" name="name" id="name" class="form-control" >
 ```
 
-<br>
+### Multiple CSS classes
+You can pass multiple classes in one call:
+
+```php
+{!! form()
+    ->input('name', 'John')
+    ->label(false)
+    ->required()
+    ->class('form-control', 'name-select')
+!!}
+```
+
+or
+
+```php
+{!! form()
+    ->input('name', 'John')
+    ->label(false)
+    ->required()
+    ->class(['form-control', 'name-select'])
+!!}
+```
+
+This will be output:
+
+```html
+<input type="text" name="name" id="name" value="John" class="form-control name-select" required>
+```
+
+### Old input support
+
+Form fields automatically use Laravel `old()` values after validation errors.
+
+You do not need to manually fetch value from old(), the old value will be inserted automatically.
+
+Use followed variant:
+
+```php
+{!! form()->input('email', 'some@email.com')) !!}
+```
+
+instead of:
+
+```php
+❌
+
+{!! form()->input('email', old('name', 'some@email.com')) !!}
+```
+
+---
 
 #### Enjoy :)
