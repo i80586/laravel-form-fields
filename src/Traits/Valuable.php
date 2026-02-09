@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace i80586\Form\Traits;
 
+/**
+ * Provides access to previously submitted form values.
+ *
+ * Relies on Laravel's `old()` helper function.
+ *
+ * @author Rasim Ashurov
+ * @date 8 February 2026
+ */
 trait Valuable
 {
 
@@ -12,7 +20,7 @@ trait Valuable
         if ($name === null) {
             return $defaultValue;
         }
-        return old($this->prepareName($name), $defaultValue); // Laravel helper function
+        return old($this->prepareName($name), $defaultValue);
     }
 
 }

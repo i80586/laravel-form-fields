@@ -1,12 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace i80586\Form;
 
 use i80586\Form\Elements\Input;
+use i80586\Form\Elements\Label;
 use i80586\Form\Elements\Tag;
+use i80586\Form\Elements\TextArea;
 
 /**
+ * Form element factory (singleton).
+ *
  * @author Rasim Ashurov
  * @date 7 February 2026
  */
@@ -35,295 +40,61 @@ class Form
     }
 
     /**
-     * Generates HTML tag, adds attributes (via $options parameter) and content (optional).
+     * Creates a generic HTML tag element.
      *
-     * @param string    $tagName            Tag name. Example: 'div', 'span', 'p', 'a', etc.
-     * @param mixed     $content (optional) Tag content. If false, tag will be self-closing.
+     * If $content is false, the tag is considered self-closing (void).
      *
-     * @return Tag
+     * @param string $tagName Tag name (e.g. "div", "span", "a").
+     * @param mixed $content Tag content. Use false for self-closing tags.
      */
     public function tag(string $tagName, mixed $content = false): Tag
     {
         return new Tag($tagName, $content);
-
-        if ($content === false) {
-            return sprintf('<%s%s>', $tagName, self::generateHtmlOptionsToString($options));
-        }
-        return sprintf('<%s%s>%s</%s>', $tagName, self::generateHtmlOptionsToString($options), $content, $tagName);
     }
 
     /**
-     * Generates <label $options>$text</label> tag.
+     * Creates a <label> element.
      *
-     * @param string        $text               Text content between tag pairs.
-     * @param string|null   $for (optional)     The value of the 'for' attribute. If not provided will not be added.
-     * @param array         $options (optional) Tag attributes. Example: ['class' => 'class names here', 'id' => 'my-custom-id'].
-     *
-     * @return string
+     * @param string $text Label text.
+     * @param string|null $for Value for the "for" attribute (usually the input id).
      */
-    public function label(string $text, ?string $for = null, array $options = []): string
+    public function label(string $text, ?string $for = null): Label
     {
-        if (!empty($for)) {
-            $options['for'] = $for;
-        }
-        return $this->tag('label', $text, $options);
+        return new Label($text, $for);
     }
 
     /**
-     * Generates <input $options> tag.
+     * Creates an <input> element.
      *
-     * @param string    $name               The 'name' attribute.
-     * @param mixed     $value              The 'value' attribute.
-     * @param array     $options (optional) Tag attributes. Example: ['class' => 'class names here', 'id' => 'my-custom-id'].
-     * @param string    $type (optional)    The value of the 'type' attribute.
-     *
-     * @return string
+     * @param string $name Value for the "name" attribute.
+     * @param mixed|null $value Initial value.
      */
     public function input(string $name, mixed $value = null): Input
     {
         return new Input($name, $value);
-
-        $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $options['value'] = $this->getOldValue($name, $value);
-        if (is_null($options['value'])) {
-            unset($options['value']);
-        } elseif (is_string($options['value'])) {
-            $options['value'] = htmlspecialchars($options['value']);
-        }
-        $options['id']    = $options['id'] ?? $name;
-        $options['name']  = $name;
-        $options['type']  = $type;
-
-        if (empty($options['class'])) {
-            unset($options['class']);
-        }
-
-        $html  = $this->appendLabelIfNeeded($name, $options);
-        $label = $this->appendErrorLabelIfNeeded($options);
-
-        $html .= sprintf('<input%s>', self::generateHtmlOptionsToString(array_reverse($options)));
-        $html .= $label;
-
-        return $html;
     }
 
     /**
-     * Generates <textarea $options>$value</textarea> tag.
+     * Creates a <textarea> element.
      *
-     * @param string    $name               The 'name' attribute.
-     * @param mixed     $value (optional)   The content between tag pairs.
-     * @param array     $options (optional) Tag attributes. Example: ['class' => 'class names here', 'id' => 'my-custom-id'].
-     *
-     * @return string
+     * @param string $name Value for the "name" attribute.
+     * @param mixed|null $value Initial content of the textarea.
      */
-    public function textarea(string $name, mixed $value = null, array $options = []): string
+    public function textarea(string $name, mixed $value = null): TextArea
     {
-        $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        $options['id']    = $options['id'] ?? $name;
-        $options['name']  = $name;
-
-        if (empty($options['class'])) {
-            unset($options['class']);
-        }
-
-        $html  = $this->appendLabelIfNeeded($name, $options);
-        $label = $this->appendErrorLabelIfNeeded($options);
-
-        $html .= sprintf('<textarea%s>%s</textarea>',
-            self::generateHtmlOptionsToString(array_reverse($options)),
-            $this->getOldValue($name, $value)
-        );
-        $html .= $label;
-
-        return $html;
+        return new TextArea($name, $value);
     }
 
     /**
-     * Generates <select $options>$optionsList</select> tag.
+     * Creates an <a> element with an optional href.
      *
-     * @param string    $name               The 'name' attribute.
-     * @param mixed     $chosen (optional)  The 'selected' attribute.
-     * @param array     $list (optional)    The list of options. Example: ['value' => 'key', 'value2' => 'key2'].
-     * @param array     $options (optional) Tag attributes. Example: ['class' => 'class names here', 'id' => 'my-custom-id'].
-     *
-     * @return string
+     * @param string $label Link text.
+     * @param string|null $link Value for the "href" attribute. If null, href is not set.
      */
-    public function dropDown(string $name, mixed $chosen = null, array $list = [], array $options = []): string
+    public function link(string $label, ?string $link = null): Tag
     {
-        $optionsList = [];
-        if (!empty($options['prompt'])) {
-            $optionsList[] = $this->tag('option', $options['prompt'], ['value' => null]);
-            unset($options['prompt']);
-        }
-        $optionsList = array_merge($optionsList, $this->optionsList($list, $name, $chosen));
-
-        $options['class'] = self::classNameWithError($name, $options['class'] ?? 'form-control');
-        if (empty($options['class'])) {
-            unset($options['class']);
-        }
-
-        $html  = $this->appendLabelIfNeeded($name, $options);
-        $label = $this->appendErrorLabelIfNeeded($options);
-
-        $html .= $this->tag('select', implode('', $optionsList), array_merge([
-            'name' => $name,
-            'id'   => $options['id'] ?? $name
-        ], $options));
-        $html .= $label;
-
-        return $html;
-    }
-
-    public function optionsList(array $list, string $name, mixed $chosen): array
-    {
-        $optionsList = [];
-        foreach ($list as $value => $key) {
-            if (is_array($key)) {
-                $optionsList[] = $this->tag(
-                    'optgroup',
-                    implode('', $this->optionsList($key, $name, $chosen)),
-                    ['label' => $value]
-                );
-                continue;
-            }
-
-            $htmlOptions = [];
-            if ((string)$value !== '') {
-                $htmlOptions = ['value' => $value];
-            }
-            $oldValue = $this->getOldValue($name, $chosen);
-            if (
-                (is_scalar($oldValue) && $value == $oldValue) ||
-                (is_array($oldValue) && in_array($value, $oldValue))
-            ) {
-                $htmlOptions['selected'] = true;
-            }
-            $optionsList[] = $this->tag('option', $key, $htmlOptions);
-        }
-        return $optionsList;
-    }
-
-    /**
-     * Appends checkbox with label for AdminLte admin panel
-     *
-     * @param string    $label   The label for checkbox
-     * @param string    $name    The content between tag pairs
-     * @param bool|null $checked Flag whether checkbox is checked or not
-     * @param array     $options (optional) Tag attributes.
-     *
-     * @return string
-     */
-    public function checkbox(string $label, string $name, bool|int|null $checked, array $options = []): string
-    {
-        $labelOptions = ['class' => 'switch'];
-        if (isset($options['label']) && is_array($options['label'])) {
-            $labelOptions = array_merge($labelOptions, $options['label']);
-            unset($options['label']);
-        }
-
-        $clearfix = '';
-        if (isset($options['clearfix'])) {
-            $clearfix = $this->tag('div', '', ['class' => 'clearfix']);
-            unset($options['clearfix']);
-        }
-
-        $html = $this->label($label, $name) . $clearfix;
-        $html .= $this->tag('label',
-            $this->input($name, null,
-                ['checked' => $this->getOldValue($name, (bool)$checked), 'label' => false], 'checkbox')
-            . $this->tag('span', '', array_merge($options, ['class' => 'slider round'])),
-            $labelOptions);
-        return $html;
-    }
-
-    /**
-     * Appends link
-     *
-     * @param string      $label   The label for link
-     * @param null|string $link    Value for href attribute of link
-     * @param array       $options (optional) Tag attributes.
-     *
-     * @return string
-     */
-    public function link(string $label, ?string $link = null, array $options = []): string
-    {
-        if (!is_null($link) && !isset($options['link'])) {
-            $options['href'] = $link;
-        }
-        return $this->tag('a', $label, $options);
-    }
-
-    /**
-     * Appends label tag under some conditions.
-     *
-     * @param string    $name               The content between tag pairs.
-     * @param array     $options (optional) Tag attributes. Example: ['label' => 'email'].
-     *
-     * @return string
-     */
-    protected function appendLabelIfNeeded(string $name, array &$options): string
-    {
-        $html = '';
-        if (!isset($options['label'])) {
-            $html .= $this->label(ucfirst($name), $name);
-        } elseif ($options['label'] !== false) {
-            $html .= $this->label($options['label'], $name);
-        }
-        unset($options['label']);
-        return $html;
-    }
-
-    /**
-     * Appends error label under some conditions
-     *
-     * @param array  $options Tag attributes. Example: ['errorLabel' => 'This field is required', 'class' => 'is-invalid'].
-     *
-     * @return string
-     */
-    protected function appendErrorLabelIfNeeded(array &$options): string
-    {
-        $label = '';
-        if (!empty($options['errorLabel']) && str_contains($options['class'], 'is-invalid')) {
-            $label = $this->tag('span', $options['errorLabel'], ['class' => 'text-danger']);
-            unset($options['errorLabel']);
-        }
-        return $label;
-    }
-
-    /**
-     * Returns old value from the previous request.
-     *
-     * @param string    $name                       The 'name' attribute.
-     * @param mixed     $defaultValue (optional)    The default value.
-     *
-     * @return mixed
-     */
-    protected function getOldValue(string $name, mixed $defaultValue = null): mixed
-    {
-        $name = str_replace(['[', ']'], '.', $name);
-        $name = rtrim(preg_replace('/[\.]+/i', '.', $name), '.');
-        return old($name, $defaultValue); // Laravel helper function
-    }
-
-    /**
-     * Adds 'is-invalid' class to the input if there is an error.
-     *
-     * @param string               $fieldName      The 'name' attribute.
-     * @param string|false|null    $classNames     The 'class' attribute.
-     *
-     * @return string
-     */
-    protected static function classNameWithError(string $fieldName, string|false|null $classNames): string
-    {
-        if (empty($classNames)) {
-            $classNames = '';
-        }
-        $fieldName = self::getInputIdByName($fieldName);
-        $errors = \View::getShared()['errors'] ?? null; // Laravel View class
-        if (!is_null($errors) && $errors->has($fieldName)) {
-            $classNames .= ' is-invalid';
-        }
-        return $classNames;
+        $tag = new Tag('a', $label);
+        return $tag->href($link ?? false);
     }
 
 }

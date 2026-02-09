@@ -9,51 +9,102 @@ use i80586\Form\Traits\Hintable;
 use i80586\Form\Traits\Labelable;
 use i80586\Form\Traits\Valuable;
 
+/**
+ * Defines base behavior for all form elements.
+ *
+ * @author Rasim Ashurov
+ * @date 7 February 2026
+ */
 abstract class Element
 {
 
     use Attributable, Valuable, Labelable, Hintable;
 
-    protected bool $isClosable = false;
+    /**
+     * Indicates whether the element should render as a form control with label and hint.
+     */
+    protected bool $isFormElement = false;
+
+    /**
+     * Stores inner HTML content for non-void elements.
+     */
     protected ?string $content = null;
 
+    /**
+     * Returns the HTML tag name of the element.
+     */
     abstract protected function tagName(): string;
 
+    /**
+     * Renders the element to HTML.
+     *
+     * If the element is a form control, it may prepend a label and append a hint.
+     * When the element is marked invalid, the "is-invalid" CSS class is appended.
+     */
     public function render(): string
     {
-        $html = $this->isClosable ? $this->makeClosableElement() : $this->makeNonClosableElement();
-        if ($this->labelIsSet()) {
-            $html = $this->addLabel($html);
+        if (!$this->isFormElement) {
+            $html = $this->generate();
+            $this->reset();
+            return $html;
         }
-        if ($this->hintIsSet()) {
-            $html = $this->addHint($html);
+
+        if ($this->hasAttribute('name') && $this->isInvalid($this->attributes['name'])) {
+            $this->appendClass('is-invalid');
         }
+
+        $label = $this->getLabel();
+        $hint  = $this->getHint();
+        $input = $this->generate();
+
         $this->reset();
-        return $html;
+
+        return $label . $input . $hint;
     }
 
+    /**
+     * Sets the element inner content.
+     *
+     * Passing null results in a void-style tag output (no closing tag).
+     *
+     * @param string|null $content Inner HTML content.
+     */
     public function setContent(?string $content): void
     {
         $this->content = $content;
     }
 
+    /**
+     * Renders the element as a string.
+     */
     public function __toString(): string
     {
         return $this->render();
     }
 
+    /**
+     * Applies default attributes for a form control.
+     *
+     * Sets "name", generates a default "id", sets a default label, and assigns a
+     * Bootstrap-like CSS class based on the tag type.
+     *
+     * @param string $name Element name.
+     */
     protected function initializeDefault(string $name): void
     {
         $this->addAttribute('name', $name);
         $this->addAttribute('id', $this->makeDefaultId($name));
         $this->setDefaultLabel($name);
-        $this->appendClass( 'form-control');
-
-        if ($this->isInvalid($name)) {
-            $this->appendClass('is-invalid');
-        }
+        $this->addAttribute( 'class', $this->tagName() == 'select' ? 'form-select' : 'form-control');
     }
 
+    /**
+     * Normalizes a field name into dot notation.
+     *
+     * Example: "user[address][city]" becomes "user.address.city".
+     *
+     * @param string $name Raw name.
+     */
     protected function prepareName(string $name): string
     {
         $name = str_replace(['[', ']'], '.', $name);
@@ -61,28 +112,39 @@ abstract class Element
         return rtrim($name, '.');
     }
 
-    protected function makeClosableElement(): string
+    /**
+     * Generates the HTML tag with its attributes and optional content.
+     *
+     * If content is null, a void-style tag is generated (no closing tag).
+     */
+    protected function generate(): string
     {
-        return sprintf('<%1$s%2$s>%3$s</%1$s>',
-            $this->tagName(),
+        $tagName = $this->tagName();
+        $template = "<$tagName{attributes}>";
+        if ($this->content !== null) {
+            $template .= "{$this->content}</{$tagName}>";
+        }
+
+        return str_replace(
+            '{attributes}',
             $this->convertAttributes($this->attributes),
-            $this->content ?? '',
+            $template
         );
     }
 
-    protected function makeNonClosableElement(): string
-    {
-        return sprintf('<%s%s>',
-            $this->tagName(),
-            $this->convertAttributes($this->attributes)
-        );
-    }
-
+    /**
+     * Resets element state after rendering.
+     */
     protected function reset(): void
     {
         $this->resetAttributes();
     }
 
+    /**
+     * Builds a default HTML id from the provided name.
+     *
+     * @param string $name Element name.
+     */
     protected function makeDefaultId(string $name): string
     {
         return str_replace(
@@ -92,16 +154,27 @@ abstract class Element
         );
     }
 
-    private function addLabel(string $html): string
+    /**
+     * Builds a label element when label text is configured.
+     */
+    private function getLabel(): ?Label
     {
-        $label = new Label($this->label, $this->attributes['id'] ?? null);
-        return $label . $html;
+        if (!$this->labelIsSet()) {
+            return null;
+        }
+        return new Label($this->label, $this->attributes['id'] ?? null);
     }
 
-    private function addHint(string $html): string
+    /**
+     * Builds a hint element when hint text is configured.
+     */
+    private function getHint(): ?Tag
     {
-        $html .= $this->hint;
-        return $html;
+        if (!$this->hintIsSet()) {
+            return null;
+        }
+        $hint = new Tag('span', $this->hint);
+        return $hint->class('text-danger');
     }
 
 }
