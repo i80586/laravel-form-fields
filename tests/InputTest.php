@@ -63,6 +63,14 @@ class InputTest extends \PHPUnit\Framework\TestCase
             $input->render());
     }
 
+    public function testWithoutValue(): void
+    {
+        $input = form()->input('no_value')->label(false);
+
+        $this->assertEquals('<input type="text" name="no_value" id="no_value" class="form-control">',
+            $input->render());
+    }
+
     public function testHint(): void
     {
         $input = form()->input('post[text]')
