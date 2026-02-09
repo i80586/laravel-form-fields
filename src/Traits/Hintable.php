@@ -45,7 +45,7 @@ trait Hintable
     protected function isInvalid(string $name): bool
     {
         $name = $this->prepareName($name);
-        $errors = \View::getShared()['errors'] ?? null;
+        $errors = $this->getErrorBag();
 
         if ($errors !== null && $errors->has($name)) {
             $this->hint = $errors->first($name);
@@ -53,6 +53,19 @@ trait Hintable
         }
 
         return false;
+    }
+
+    /**
+     * Retrieves the validation error bag.
+     *
+     * The error bag is resolved from Laravel's shared view data.
+     * Returns null when no validation errors are available.
+     *
+     * @return \Illuminate\Support\MessageBag|null
+     */
+    protected function getErrorBag(): mixed
+    {
+        return \View::getShared()['errors'] ?? null;
     }
 
     /**

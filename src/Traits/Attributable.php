@@ -38,7 +38,6 @@ trait Attributable
         return $this;
     }
 
-
     /**
      * Sets or replaces an attribute value.
      *
@@ -104,7 +103,7 @@ trait Attributable
      *
      * @param array<string, mixed> $attributes Attributes map.
      */
-    private function convertAttributes(array $attributes): string
+    protected function convertAttributes(array $attributes): string
     {
         $attributesString = join(' ', array_filter(array_map(function ($key) use ($attributes) {
             $value = $attributes[$key];
@@ -114,7 +113,7 @@ trait Attributable
             if (is_bool($value)) {
                 return $value ? $key : '';
             }
-            return $key . '="' . $this->encodeDoubleQuotes((string)$value) . '"';
+            return $key . '="' . $this->escapeAttribute((string)$value) . '"';
         }, array_keys($attributes))));
         if (!empty($attributesString)) {
             $attributesString = ' ' . $attributesString;
@@ -164,7 +163,7 @@ trait Attributable
      *
      * @param string $value Raw value.
      */
-    private function encodeDoubleQuotes(string $value): string
+    private function escapeAttribute(string $value): string
     {
         return str_replace('"', '&quot;', $value);
     }

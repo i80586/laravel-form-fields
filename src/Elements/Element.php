@@ -49,9 +49,7 @@ abstract class Element
             return $html;
         }
 
-        if ($this->hasAttribute('name') && $this->isInvalid($this->attributes['name'])) {
-            $this->appendClass('is-invalid');
-        }
+        $this->applyInvalidClassIfNeeded();
 
         $label = $this->getLabel();
         $hint  = $this->getHint();
@@ -95,7 +93,7 @@ abstract class Element
         $this->addAttribute('name', $name);
         $this->addAttribute('id', $this->makeDefaultId($name));
         $this->setDefaultLabel($name);
-        $this->addAttribute( 'class', $this->tagName() == 'select' ? 'form-select' : 'form-control');
+        $this->addAttribute('class', $this->tagName() == 'select' ? 'form-select' : 'form-control');
     }
 
     /**
@@ -119,17 +117,15 @@ abstract class Element
      */
     protected function generate(): string
     {
-        $tagName = $this->tagName();
-        $template = "<$tagName{attributes}>";
+        $tagName    = $this->tagName();
+        $attributes = $this->convertAttributes($this->attributes);
+        $template   = "<$tagName{$attributes}>";
+
         if ($this->content !== null) {
             $template .= "{$this->content}</{$tagName}>";
         }
 
-        return str_replace(
-            '{attributes}',
-            $this->convertAttributes($this->attributes),
-            $template
-        );
+        return $template;
     }
 
     /**
@@ -137,6 +133,7 @@ abstract class Element
      */
     protected function reset(): void
     {
+        $this->content = null;
         $this->resetAttributes();
     }
 
@@ -147,11 +144,10 @@ abstract class Element
      */
     protected function makeDefaultId(string $name): string
     {
-        return str_replace(
-            ['[]', '][', '[', ']', ' ', '.', '--'],
-            ['', '_', '_', '', '_', '_', '_'],
-            $name
-        );
+        $name = str_replace(['][', '[', ']'], ['_', '_', ''], $name);
+        $name = preg_replace('/-+/', '_', $name) ?? $name;
+
+        return rtrim($name, '-');
     }
 
     /**
@@ -175,6 +171,16 @@ abstract class Element
         }
         $hint = new Tag('span', $this->hint);
         return $hint->class('text-danger');
+    }
+
+    /**
+     * Appends is-invalid bootstrap class if a validation error exists for this attribute
+     */
+    private function applyInvalidClassIfNeeded(): void
+    {
+        if ($this->hasAttribute('name') && $this->isInvalid($this->attributes['name'])) {
+            $this->appendClass('is-invalid');
+        }
     }
 
 }
