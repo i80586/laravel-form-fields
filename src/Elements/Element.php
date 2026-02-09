@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace i80586\Form\Elements;
 
-use i80586\Form\Traits\Attributable;
-use i80586\Form\Traits\Hintable;
-use i80586\Form\Traits\Labelable;
-use i80586\Form\Traits\Valuable;
+use i80586\Form\Traits\{
+    Attributable,
+    Hintable,
+    Labelable,
+    Valuable
+};
 
 /**
  * Defines base behavior for all form elements.
@@ -61,23 +63,23 @@ abstract class Element
     }
 
     /**
+     * Renders the element as a string.
+     */
+    public function __toString(): string
+    {
+        return $this->render();
+    }
+
+    /**
      * Sets the element inner content.
      *
      * Passing null results in a void-style tag output (no closing tag).
      *
      * @param string|null $content Inner HTML content.
      */
-    public function setContent(?string $content): void
+    protected function setContent(?string $content): void
     {
         $this->content = $content;
-    }
-
-    /**
-     * Renders the element as a string.
-     */
-    public function __toString(): string
-    {
-        return $this->render();
     }
 
     /**
@@ -118,7 +120,7 @@ abstract class Element
     protected function generate(): string
     {
         $tagName    = $this->tagName();
-        $attributes = $this->convertAttributes($this->attributes);
+        $attributes = $this->buildAttributesString();
         $template   = "<$tagName{$attributes}>";
 
         if ($this->content !== null) {

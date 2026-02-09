@@ -100,13 +100,11 @@ trait Attributable
      * - boolean true renders the attribute name: required
      * - boolean false omits the attribute
      * - other values render as key="value" with double quotes encoded
-     *
-     * @param array<string, mixed> $attributes Attributes map.
      */
-    protected function convertAttributes(array $attributes): string
+    protected function buildAttributesString(): string
     {
-        $attributesString = join(' ', array_filter(array_map(function ($key) use ($attributes) {
-            $value = $attributes[$key];
+        $attributesString = join(' ', array_filter(array_map(function ($key) {
+            $value = $this->attributes[$key];
             if ($value === null) {
                 return $key;
             }
@@ -114,7 +112,7 @@ trait Attributable
                 return $value ? $key : '';
             }
             return $key . '="' . $this->escapeAttribute((string)$value) . '"';
-        }, array_keys($attributes))));
+        }, array_keys($this->attributes))));
         if (!empty($attributesString)) {
             $attributesString = ' ' . $attributesString;
         }
