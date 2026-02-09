@@ -15,6 +15,11 @@ Version 2 introduces a **builder-style syntax**, replacing array-based configura
 
 ---
 
+## 📋 Requirements
+
+- PHP >= 8.3
+- Laravel >= 10
+
 ## 📦 Installation
 
 ```bash
