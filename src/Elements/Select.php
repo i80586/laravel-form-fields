@@ -155,6 +155,10 @@ class Select extends Element
             return [];
         }
 
+        if (is_array($chosen)) {
+            return array_flip($chosen);
+        }
+
         return [(string)$chosen => true];
     }
 

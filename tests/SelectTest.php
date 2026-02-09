@@ -42,6 +42,25 @@ HTML;
             $select->render());
     }
 
+    public function testSelectWithMultipleChoices(): void
+    {
+        $select = new Select('city', [3, 2], self::CITIES_LIST, 'Choose city');
+
+        $expected = <<<HTML
+<label for="city">City</label>
+<select name="city" id="city" class="form-select">
+<option value>Choose city</option>
+<option value="1">New York</option>
+<option value="2" selected>Copenhagen</option>
+<option value="3" selected>Baku</option>
+<option value="4">Washington</option>
+</select>
+HTML;
+
+        $this->assertEquals(str_replace("\n", '', $expected),
+            $select->render());
+    }
+
     public function testOptionGroups(): void
     {
         $select = new Select('color', 2, self::OPTION_GROUPS, 'Choose color');
