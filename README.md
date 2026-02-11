@@ -94,6 +94,22 @@ This will be output:
 <input type="text" name="name" id="name" value="John" class="form-control name-select" required>
 ```
 
+### Select
+
+```php
+{!! form()->select('city', 1, [1 => 'Baku'], 'Choose city') !!}
+```
+
+This will be output:
+
+```html
+<label for="city">City</label>
+<select name="city" id="city">
+<option value>Choose city</option>    
+<option value="1" selected>Baku</option>    
+</select>
+```
+
 ### Old input support
 
 Form fields automatically use Laravel `old()` values after validation errors.
@@ -111,7 +127,7 @@ instead of:
 ```php
 ❌
 
-{!! form()->input('email', old('name', 'some@email.com')) !!}
+{!! form()->input('email', old('email', 'some@email.com')) !!}
 ```
 
 ---
