@@ -49,7 +49,7 @@ class Select extends Element
 
         $this->prompt($prompt);
 
-        $actualValue = $this->getOldValue($name, $chosen);
+        $actualValue = is_null($name) ? null : $this->getOldValue($name, $chosen);
         $options     = $this->generateContent($list, $actualValue);
         $this->setContent($options);
     }

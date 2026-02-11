@@ -34,11 +34,11 @@ class TextArea extends Element
     {
         if ($name !== null) {
             $this->initializeDefault($name);
-        }
 
-        $actualValue = $this->getOldValue($name, $value);
-        if ($actualValue !== null) {
-            $this->setContent($actualValue);
+            $actualValue = $this->getOldValue($name, $value);
+            if ($actualValue !== null) {
+                $this->setContent($actualValue);
+            }
         }
     }
 
