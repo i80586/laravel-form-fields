@@ -14,13 +14,18 @@ if (!class_exists(\View::class)) {
     class ViewErrorBag
     {
         private array $errors = [
-            'withError' => true,
-            'post.text' => true
+            'withError' => 'Test label of error',
+            'post.text' => 'Post text must be specified',
         ];
 
         public function has(string $name): bool
         {
             return isset($this->errors[$name]);
+        }
+
+        public function first(string $name): ?string
+        {
+            return $this->errors[$name] ?? null;
         }
     }
 

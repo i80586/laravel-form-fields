@@ -1,7 +1,6 @@
 {
   "name": "i80586/laravel-form-fields",
   "description": "Laravel form fields generator - for admin panels",
-  "minimum-stability": "stable",
   "type": "library",
   "license": "MIT",
   "keywords": [
@@ -17,10 +16,10 @@
     }
   ],
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "v9.6.*"
+    "phpunit/phpunit": "^10.5"
   },
   "scripts": {
     "test": "./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests"
