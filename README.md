@@ -133,4 +133,16 @@ instead of:
 
 ---
 
-#### Enjoy :)
+## Philosophy
+
+- Fluent API
+
+- Explicit over magic
+
+- Laravel-native behavior
+
+- Clean and predictable HTML output
+
+## License
+
+MIT License
