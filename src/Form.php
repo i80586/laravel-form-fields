@@ -6,6 +6,7 @@ namespace i80586\Form;
 
 use i80586\Form\Elements\Input;
 use i80586\Form\Elements\Label;
+use i80586\Form\Elements\Select;
 use i80586\Form\Elements\Tag;
 use i80586\Form\Elements\TextArea;
 
@@ -77,12 +78,25 @@ class Form
     /**
      * Creates a <textarea> element.
      *
-     * @param string $name Value for the "name" attribute.
-     * @param mixed|null $value Initial content of the textarea.
+     * @param string|null $name Value for the "name" attribute.
+     * @param mixed|null  $value Initial content of the textarea.
      */
-    public function textarea(string $name, mixed $value = null): TextArea
+    public function textarea(?string $name = null, mixed $value = null): TextArea
     {
         return new TextArea($name, $value);
+    }
+
+    /**
+     * Create a <select> element.
+     *
+     * @param string|null $name     Value for the "name" attribute.
+     * @param mixed|null $chosen    The value of the selected option.
+     * @param array $list           List of options. <key-value> pairs.
+     * @param string|null $prompt   Default option label without value.
+     */
+    public function select(?string $name = null, mixed $chosen = null, array $list = [], ?string $prompt = null): Select
+    {
+        return new Select($name, $chosen, $list, $prompt);
     }
 
     /**
