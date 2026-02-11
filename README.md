@@ -104,7 +104,7 @@ This will be output:
 
 ```html
 <label for="city">City</label>
-<select name="city" id="city">
+<select name="city" id="city" class="form-select">
 <option value>Choose city</option>    
 <option value="1" selected>Baku</option>    
 </select>
