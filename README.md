@@ -1,6 +1,6 @@
 # laravel-form-fields
 
-Fluent form fields generator for Laravel
+A fluent form field generator for Laravel
 
 [![Latest Version](https://img.shields.io/github/release/i80586/laravel-form-fields.svg?style=flat-square)](https://github.com/i80586/laravel-form-fields/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/i80586/laravel-form-fields/php-ci.yml?label=ci%20build&style=flat-square)](https://github.com/i80586/laravel-form-fields/actions?query=workflow%3ACI)
@@ -45,28 +45,28 @@ Output:
 {!! form()->input('name', 'John') !!}
 ```
 
-This will be output:
+This will output:
 
 ```html
 <label for="name">Name</label>
 <input type="text" name="name" id="name" class="form-control" value="John">
 ```
 
-### Label
+### Change the text of the default label
 
 ```php
 {!! form()->input('name')->label('Your name') !!}
 ```
 
-This will be output:
+This will output:
 
 ```html
 <label for="name">Your name</label>
-<input type="text" name="name" id="name" class="form-control" >
+<input type="text" name="name" id="name" class="form-control">
 ```
 
 ### Multiple CSS classes
-You can pass multiple classes in one call:
+You can pass multiple CSS classes in a single call:
 
 ```php
 {!! form()
@@ -88,7 +88,7 @@ or
 !!}
 ```
 
-This will be output:
+This will output:
 
 ```html
 <input type="text" name="name" id="name" value="John" class="form-control name-select" required>
@@ -100,7 +100,7 @@ This will be output:
 {!! form()->select('city', 1, [1 => 'Baku'], 'Choose city') !!}
 ```
 
-This will be output:
+This will output:
 
 ```html
 <label for="city">City</label>
@@ -114,12 +114,13 @@ This will be output:
 
 Form fields automatically use Laravel `old()` values after validation errors.
 
-You do not need to manually fetch value from old(), the old value will be inserted automatically.
+You do not need to manually call old();
+the previous value will be inserted automatically.
 
-Use followed variant:
+Use the following variant:
 
 ```php
-{!! form()->input('email', 'some@email.com')) !!}
+{!! form()->input('email', 'some@email.com') !!}
 ```
 
 instead of:
