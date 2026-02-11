@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use i80586\Form\Elements\Select;
 use PHPUnit\Framework\TestCase;
 
 class SelectTest extends TestCase
@@ -25,7 +24,7 @@ class SelectTest extends TestCase
 
     public function testSelect(): void
     {
-        $select = new Select('city', 3, self::CITIES_LIST, 'Choose city');
+        $select = form()->select('city', 3, self::CITIES_LIST, 'Choose city');
 
         $expected = <<<HTML
 <label for="city">City</label>
@@ -44,7 +43,7 @@ HTML;
 
     public function testSelectWithMultipleChoices(): void
     {
-        $select = new Select('city', [3, 2], self::CITIES_LIST, 'Choose city');
+        $select = form()->select('city', [3, 2], self::CITIES_LIST, 'Choose city');
 
         $expected = <<<HTML
 <label for="city">City</label>
@@ -63,7 +62,7 @@ HTML;
 
     public function testOptionGroups(): void
     {
-        $select = new Select('color', 2, self::OPTION_GROUPS, 'Choose color');
+        $select = form()->select('color', 2, self::OPTION_GROUPS, 'Choose color');
 
         $expected = <<<HTML
 <label for="color">Color</label>
