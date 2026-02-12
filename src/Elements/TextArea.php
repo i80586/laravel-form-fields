@@ -49,11 +49,9 @@ class TextArea extends Element
      */
     protected function beforeRender(): void
     {
-        if ($this->suitableToCheckOld()) {
-            $actualValue = $this->getOldValue($this->attributes['name'], $this->value);
-            if ($actualValue !== null) {
-                $this->setContent($actualValue);
-            }
+        $value = $this->getActualValue();
+        if ($value !== null) {
+            $this->setContent($value);
         }
     }
 
@@ -63,6 +61,20 @@ class TextArea extends Element
     protected function tagName(): string
     {
         return 'textarea';
+    }
+
+    /**
+     * Resolves the effective value of the element.
+     *
+     * If old input restoration is enabled, the previously submitted
+     * value (via Laravel's `old()` helper) takes precedence.
+     * Otherwise, the explicitly defined element value is returned.
+     */
+    private function getActualValue(): mixed
+    {
+        return $this->suitableToCheckOld()
+            ? $this->getOldValue($this->attributes['name'], $this->value)
+            : $this->value;
     }
 
 }

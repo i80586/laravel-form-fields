@@ -180,9 +180,8 @@ class Select extends Element
      */
     private function getActualValue(): mixed
     {
-        if ($this->suitableToCheckOld()) {
-            return $this->getOldValue($this->attributes['name'], $this->chosen);
-        }
-        return null;
+        return $this->suitableToCheckOld()
+            ? $this->getOldValue($this->attributes['name'], $this->chosen)
+            : $this->chosen;
     }
 }
