@@ -5,7 +5,7 @@ include __DIR__ . '/../vendor/autoload.php';
 if (!function_exists('old')) {
     function old($key = null, $default = null)
     {
-        return $default;
+        return ['with_old' => 'test_value'][$key] ?? $default;
     }
 }
 

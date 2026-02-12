@@ -38,4 +38,16 @@ class Label extends Element
     {
         return 'label';
     }
+
+    /**
+     * Hook executed before rendering.
+     *
+     * This default implementation does nothing.
+     * Concrete elements may override this method to
+     * mutate attributes, value or content before rendering.
+     */
+    protected function beforeRender(): void
+    {
+        // Intentionally left blank.
+    }
 }

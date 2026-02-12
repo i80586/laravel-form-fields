@@ -20,11 +20,6 @@ class Select extends Element
     protected bool $isFormElement = true;
 
     /**
-     * Stores an optional prompt label rendered as the first empty option.
-     */
-    protected ?string $prompt = null;
-
-    /**
      * Creates a select element and generates its options.
      *
      * When a name is provided, default attributes are initialized (name, id, label, class).
@@ -41,17 +36,16 @@ class Select extends Element
      * @param array       $list    Options map or grouped options.
      * @param string|null $prompt  Prompt label rendered as an empty option.
      */
-    public function __construct(?string $name = null, mixed $chosen = null, array $list = [], ?string $prompt = null)
+    public function __construct(
+        ?string $name = null,
+        protected readonly mixed $chosen = null,
+        protected readonly array $list = [],
+        protected ?string $prompt = null
+    )
     {
         if ($name !== null) {
             $this->initializeDefault($name);
         }
-
-        $this->prompt($prompt);
-
-        $actualValue = is_null($name) ? null : $this->getOldValue($name, $chosen);
-        $options     = $this->generateContent($list, $actualValue);
-        $this->setContent($options);
     }
 
     /**
@@ -162,4 +156,33 @@ class Select extends Element
         return [(string)$chosen => true];
     }
 
+    /**
+     * Generates and assigns the inner HTML content for selectable elements.
+     *
+     * Builds the <option> (and <optgroup>) structure based on the provided list
+     * and the currently resolved value, then injects it into the element content
+     * before rendering.
+     */
+    protected function beforeRender(): void
+    {
+        $options     = $this->generateContent($this->list, $this->getActualValue());
+        $this->setContent($options);
+    }
+
+    /**
+     * Resolves the actual selected value for the element.
+     *
+     * If the element supports old input restoration, the previously submitted
+     * value (old input) is returned. Otherwise, null is returned.
+     *
+     * This method is typically used by selectable elements (e.g. select)
+     * to determine which option(s) should be marked as selected.
+     */
+    private function getActualValue(): mixed
+    {
+        if ($this->suitableToCheckOld()) {
+            return $this->getOldValue($this->attributes['name'], $this->chosen);
+        }
+        return null;
+    }
 }

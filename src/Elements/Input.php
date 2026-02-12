@@ -31,14 +31,26 @@ class Input extends Element
      * @param string|null $name   Field name attribute.
      * @param mixed       $value  Default input value.
      */
-    public function __construct(?string $name = null, mixed $value = null)
+    public function __construct(?string $name = null, private readonly mixed $value = null)
     {
         $this->addAttribute('type', 'text');
 
         if ($name !== null) {
             $this->initializeDefault($name);
+        }
+    }
 
-            $actualValue = $this->getOldValue($name, $value);
+    /**
+     * Synchronizes the element value with the previously submitted (old) input.
+     *
+     * If the element is eligible for old input restoration,
+     * it resolves the actual value (old input has priority over the default value)
+     * and sets it as the "value" attribute.
+     */
+    protected function beforeRender(): void
+    {
+        if ($this->suitableToCheckOld()) {
+            $actualValue = $this->getOldValue($this->attributes['name'], $this->value);
             if ($actualValue !== null) {
                 $this->addAttribute('value', $actualValue);
             }

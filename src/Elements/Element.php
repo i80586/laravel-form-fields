@@ -38,6 +38,16 @@ abstract class Element
     abstract protected function tagName(): string;
 
     /**
+     * Hook executed before the element is rendered.
+     *
+     * This method allows concrete elements to mutate their internal state,
+     * attributes or content before generating the final HTML output.
+     *
+     * It is called automatically during the rendering lifecycle.
+     */
+    abstract protected function beforeRender(): void;
+
+    /**
      * Renders the element to HTML.
      *
      * If the element is a form control, it may prepend a label and append a hint.
@@ -45,6 +55,8 @@ abstract class Element
      */
     public function render(): string
     {
+        $this->beforeRender();
+
         if (!$this->isFormElement) {
             $html = $this->generate();
             $this->reset();
@@ -137,6 +149,11 @@ abstract class Element
     {
         $this->content = null;
         $this->resetAttributes();
+    }
+
+    protected function suitableToCheckOld(): bool
+    {
+        return $this->withOldValue() && $this->hasAttribute('name');
     }
 
     /**

@@ -24,7 +24,7 @@ class InputTest extends \PHPUnit\Framework\TestCase
         $input = form()->input('first_name', 'John Doe')
                     ->placeholder('Enter your name');
 
-        $this->assertEquals('<label for="first_name">First name</label><input type="text" name="first_name" id="first_name" class="form-control" value="John Doe" placeholder="Enter your name">',
+        $this->assertEquals('<label for="first_name">First name</label><input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your name" value="John Doe">',
             $input->render());
 
         $input = form()->input('first_name', 'John Doe')
@@ -68,6 +68,22 @@ class InputTest extends \PHPUnit\Framework\TestCase
         $input = form()->input('no_value')->label(false);
 
         $this->assertEquals('<input type="text" name="no_value" id="no_value" class="form-control">',
+            $input->render());
+    }
+
+    public function testWithOldValue(): void
+    {
+        $input = form()->input('with_old')->label(false);
+
+        $this->assertEquals('<input type="text" name="with_old" id="with_old" class="form-control" value="test_value">',
+            $input->render());
+    }
+
+    public function testWithoutOldValue(): void
+    {
+        $input = form()->input('with_old')->withoutOld()->label(false);
+
+        $this->assertEquals('<input type="text" name="with_old" id="with_old" class="form-control">',
             $input->render());
     }
 

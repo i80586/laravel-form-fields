@@ -30,12 +30,27 @@ class TextArea extends Element
      * @param string|null $name   Field name attribute.
      * @param mixed       $value  Default textarea content.
      */
-    public function __construct(?string $name = null, mixed $value = null)
+    public function __construct(?string $name = null, protected readonly mixed $value = null)
     {
         if ($name !== null) {
             $this->initializeDefault($name);
+        }
+    }
 
-            $actualValue = $this->getOldValue($name, $value);
+    /**
+     * Synchronizes the element content with previously submitted (old) input.
+     *
+     * If old input restoration is enabled and an old value exists,
+     * it replaces the current element content with that value
+     * before rendering.
+     *
+     * This is typically used for elements where the value is stored
+     * as inner content (e.g. textarea).
+     */
+    protected function beforeRender(): void
+    {
+        if ($this->suitableToCheckOld()) {
+            $actualValue = $this->getOldValue($this->attributes['name'], $this->value);
             if ($actualValue !== null) {
                 $this->setContent($actualValue);
             }

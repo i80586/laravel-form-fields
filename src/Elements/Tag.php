@@ -29,8 +29,20 @@ class Tag extends Element
     public function __construct(private readonly string $tagName, mixed $content = false)
     {
         if ($content !== false) {
-            $this->content    = $content ?? '';
+            $this->content = $content ?? '';
         }
+    }
+
+    /**
+     * Hook executed before rendering.
+     *
+     * This default implementation does nothing.
+     * Concrete elements may override this method to
+     * mutate attributes, value or content before rendering.
+     */
+    protected function beforeRender(): void
+    {
+        // Intentionally left blank.
     }
 
     /**

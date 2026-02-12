@@ -57,7 +57,7 @@ trait Attributable
      */
     protected function hasAttribute(string $name): bool
     {
-        return array_key_exists($name, $this->attributes);
+        return isset($this->attributes[$name]);
     }
 
     /**
@@ -103,6 +103,8 @@ trait Attributable
      */
     protected function buildAttributesString(): string
     {
+        $this->sortAttributes();
+
         $attributesString = join(' ', array_filter(array_map(function ($key) {
             $value = $this->attributes[$key];
             if ($value === null) {
@@ -117,6 +119,21 @@ trait Attributable
             $attributesString = ' ' . $attributesString;
         }
         return $attributesString;
+    }
+
+    /**
+     * Sorts element attributes by their values.
+     *
+     * Ensures that attributes with non-null values are placed
+     * before attributes with null values while preserving
+     * the original keys.
+     *
+     * This helps produce cleaner and more predictable
+     * HTML output during rendering.
+     */
+    private function sortAttributes(): void
+    {
+        uasort($this->attributes, fn ($a, $b) => ($a === null) <=> ($b === null));
     }
 
     /**
