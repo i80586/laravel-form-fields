@@ -79,6 +79,14 @@ class InputTest extends \PHPUnit\Framework\TestCase
             $input->render());
     }
 
+    public function testWithOldValueWithDefaultValue(): void
+    {
+        $input = form()->input('with_old', 'John')->withoutOld()->label(false);
+
+        $this->assertEquals('<input type="text" name="with_old" id="with_old" class="form-control" value="John">',
+            $input->render());
+    }
+
     public function testWithoutOldValue(): void
     {
         $input = form()->input('with_old')->withoutOld()->label(false);
