@@ -27,7 +27,7 @@ class Label extends Element
     {
         $this->setContent($label);
         if ($for !== null) {
-            $this->addAttribute('for', $for);
+            $this->attribute('for', $for);
         }
     }
 

@@ -27,7 +27,7 @@ trait Valuable
      * When disabled, the element will ignore previously submitted
      * values and rely only on the explicitly provided value.
      */
-    public function withoutOld(): static
+    public function withoutOld(): self
     {
         $this->withOldValue = false;
         return $this;
@@ -50,7 +50,7 @@ trait Valuable
     /**
      * Enables automatic restoration of old input for the element.
      */
-    protected function enableOldValue(): static
+    protected function enableOldValue(): self
     {
         $this->withOldValue = true;
         return $this;

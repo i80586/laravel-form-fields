@@ -104,10 +104,10 @@ abstract class Element
      */
     protected function initializeDefault(string $name): void
     {
-        $this->addAttribute('name', $name);
-        $this->addAttribute('id', $this->makeDefaultId($name));
+        $this->attribute('name', $name);
+        $this->attribute('id', $this->makeDefaultId($name));
         $this->setDefaultLabel($name);
-        $this->addAttribute('class', $this->tagName() == 'select' ? 'form-select' : 'form-control');
+        $this->attribute('class', $this->tagName() == 'select' ? 'form-select' : 'form-control');
     }
 
     /**

@@ -32,7 +32,7 @@ trait Labelable
         if ($this->isFormElement) {
             $this->label = $label === false ? null : $label;
         } else {
-            $this->addAttribute('label', $label);
+            $this->attribute('label', $label);
         }
         return $this;
     }
