@@ -32,21 +32,44 @@ trait Attributable
      * @param string $name       Attribute name.
      * @param array  $arguments  Attribute value arguments.
      */
-    public function __call(string $name, array $arguments): static
+    public function __call(string $name, array $arguments): self
     {
-        $this->addAttribute($name, $this->prepareAttributeValue($arguments));
+        $this->attribute($name, ...$arguments);
         return $this;
     }
 
     /**
      * Sets or replaces an attribute value.
      *
-     * @param string $name   Attribute name.
-     * @param mixed  $value  Attribute value.
+     * @param string $name          Attribute name.
+     * @param mixed  ...$arguments  Value parameter for attribute
+     * @return Attributable
      */
-    protected function addAttribute(string $name, mixed $value = null): static
+    public function attribute(string $name, ...$arguments): self
     {
-        $this->attributes[$name] = $value;
+        $this->attributes[$name] = $this->prepareAttributeValue($arguments);
+        return $this;
+    }
+
+    /**
+     * Appends a CSS class to the "class" attribute.
+     *
+     * @param string $className CSS class to append.
+     */
+    public function appendClass(string $className): self
+    {
+        $className = trim($className);
+
+        if ($className === '') {
+            return $this;
+        }
+
+        if (isset($this->attributes['class']) && !is_bool($this->attributes['class'])) {
+            $this->attributes['class'] .= ' ' . $className;
+        } else {
+            $this->attributes['class'] = $className;
+        }
+
         return $this;
     }
 
@@ -66,21 +89,6 @@ trait Attributable
     protected function resetAttributes(): void
     {
         $this->attributes = [];
-    }
-
-    /**
-     * Appends a CSS class to the "class" attribute.
-     *
-     * @param string $className CSS class to append.
-     */
-    protected function appendClass(string $className): static
-    {
-        if (isset($this->attributes['class']) && !is_bool($this->attributes['class'])) {
-            $this->attributes['class'] .= ' ' . $className;
-        } else {
-            $this->attributes['class'] = $className;
-        }
-        return $this;
     }
 
     /**
@@ -113,7 +121,7 @@ trait Attributable
             if (is_bool($value)) {
                 return $value ? $key : '';
             }
-            return $key . '="' . $this->escapeAttribute((string)$value) . '"';
+            return $key . '="' . $this->escapeAttributeValue((string)$value) . '"';
         }, array_keys($this->attributes))));
         if (!empty($attributesString)) {
             $attributesString = ' ' . $attributesString;
@@ -178,7 +186,7 @@ trait Attributable
      *
      * @param string $value Raw value.
      */
-    private function escapeAttribute(string $value): string
+    private function escapeAttributeValue(string $value): string
     {
         return str_replace('"', '&quot;', $value);
     }

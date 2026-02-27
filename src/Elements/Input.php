@@ -33,7 +33,7 @@ class Input extends Element
      */
     public function __construct(?string $name = null, private readonly mixed $value = null)
     {
-        $this->addAttribute('type', 'text');
+        $this->attribute('type', 'text');
 
         if ($name !== null) {
             $this->initializeDefault($name);
@@ -51,7 +51,7 @@ class Input extends Element
     {
         $value = $this->getActualValue();
         if ($value !== null) {
-            $this->addAttribute('value', $value);
+            $this->attribute('value', $value);
         }
     }
 

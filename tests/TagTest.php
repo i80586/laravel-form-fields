@@ -19,4 +19,14 @@ class TagTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('<img src="test.png">', $tag->render());
     }
 
+    public function testCustomAttribute(): void
+    {
+        $tag = form()->tag('span', 'test-content')
+            ->attribute('class', 'custom-class', 'custom-class-second')
+            ->attribute('required', false)
+            ->appendClass('custom-class-third');
+
+        $this->assertEquals('<span class="custom-class custom-class-second custom-class-third">test-content</span>', $tag->render());
+    }
+
 }
