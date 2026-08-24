@@ -34,7 +34,7 @@ class Label extends Element
     /**
      * Returns the element tag name.
      */
-    protected function tagName(): string
+    public function tagName(): string
     {
         return 'label';
     }

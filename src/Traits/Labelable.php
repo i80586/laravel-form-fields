@@ -29,7 +29,7 @@ trait Labelable
      */
     public function label(string|false $label): static
     {
-        if ($this->isFormElement) {
+        if ($this->isFormElement()) {
             $this->label = $label === false ? null : $label;
         } else {
             $this->attribute('label', $label);

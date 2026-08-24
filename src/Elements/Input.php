@@ -13,13 +13,8 @@ namespace i80586\Form\Elements;
  * @author Rasim Ashurov
  * @date 7 February 2026
  */
-class Input extends Element
+class Input extends Element implements FormElementInterface
 {
-
-    /**
-     * Indicates that the element should render as a form control with label and hint.
-     */
-    protected bool $isFormElement = true;
 
     /**
      * Creates an input element.
@@ -41,6 +36,14 @@ class Input extends Element
     }
 
     /**
+     * Returns the element tag name.
+     */
+    public function tagName(): string
+    {
+        return 'input';
+    }
+
+    /**
      * Synchronizes the element value with the previously submitted (old) input.
      *
      * If the element is eligible for old input restoration,
@@ -53,14 +56,6 @@ class Input extends Element
         if ($value !== null) {
             $this->attribute('value', $value);
         }
-    }
-
-    /**
-     * Returns the element tag name.
-     */
-    protected function tagName(): string
-    {
-        return 'input';
     }
 
     /**

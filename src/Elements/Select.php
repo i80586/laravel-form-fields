@@ -11,13 +11,8 @@ namespace i80586\Form\Elements;
  *
  * @date 9 February 2026
  */
-class Select extends Element
+class Select extends Element implements FormElementInterface
 {
-
-    /**
-     * Indicates that the element should render as a form control with label and hint.
-     */
-    protected bool $isFormElement = true;
 
     /**
      * Creates a select element and generates its options.
@@ -62,7 +57,7 @@ class Select extends Element
     /**
      * Returns the element tag name.
      */
-    protected function tagName(): string
+    public function tagName(): string
     {
         return 'select';
     }

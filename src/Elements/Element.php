@@ -17,25 +17,15 @@ use i80586\Form\Traits\{
  * @author Rasim Ashurov
  * @date 7 February 2026
  */
-abstract class Element
+abstract class Element implements ElementInterface
 {
 
     use Attributable, Valuable, Labelable, Hintable;
 
     /**
-     * Indicates whether the element should render as a form control with label and hint.
-     */
-    protected bool $isFormElement = false;
-
-    /**
      * Stores inner HTML content for non-void elements.
      */
     protected ?string $content = null;
-
-    /**
-     * Returns the HTML tag name of the element.
-     */
-    abstract protected function tagName(): string;
 
     /**
      * Hook executed before the element is rendered.
@@ -57,7 +47,7 @@ abstract class Element
     {
         $this->beforeRender();
 
-        if (!$this->isFormElement) {
+        if (!$this->isFormElement()) {
             $html = $this->generate();
             $this->reset();
             return $html;
@@ -92,6 +82,14 @@ abstract class Element
     protected function setContent(?string $content): void
     {
         $this->content = $content;
+    }
+
+    /**
+     * Checks whether the element should render as a form control with label and hint.
+     */
+    protected function isFormElement(): bool
+    {
+        return $this instanceof FormElementInterface;
     }
 
     /**
@@ -151,6 +149,9 @@ abstract class Element
         $this->resetAttributes();
     }
 
+    /**
+     * Checks that the element has name attribute and checking old value is enabled
+     */
     protected function suitableToCheckOld(): bool
     {
         return $this->withOldValue() && $this->hasAttribute('name');

@@ -34,6 +34,14 @@ class Tag extends Element
     }
 
     /**
+     * Returns the element tag name.
+     */
+    public function tagName(): string
+    {
+        return $this->tagName;
+    }
+
+    /**
      * Hook executed before rendering.
      *
      * This default implementation does nothing.
@@ -45,11 +53,4 @@ class Tag extends Element
         // Intentionally left blank.
     }
 
-    /**
-     * Returns the element tag name.
-     */
-    protected function tagName(): string
-    {
-        return $this->tagName;
-    }
 }
