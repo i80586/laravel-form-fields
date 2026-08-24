@@ -13,13 +13,8 @@ namespace i80586\Form\Elements;
  * @author Rasim Ashurov
  * @date 8 February 2026
  */
-class TextArea extends Element
+class TextArea extends Element implements FormElementInterface
 {
-
-    /**
-     * Indicates that the element should render as a form control with label and hint.
-     */
-    protected bool $isFormElement = true;
 
     /**
      * Creates a textarea element.
@@ -50,15 +45,13 @@ class TextArea extends Element
     protected function beforeRender(): void
     {
         $value = $this->getActualValue();
-        if ($value !== null) {
-            $this->setContent($value);
-        }
+        $this->setContent($value ?? '');
     }
 
     /**
      * Returns the element tag name.
      */
-    protected function tagName(): string
+    public function tagName(): string
     {
         return 'textarea';
     }
